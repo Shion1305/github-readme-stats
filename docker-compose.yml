@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   github-readme-stats:
     build:
@@ -37,7 +37,15 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9000/api?username=anuraghazra"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:9000/api?username=anuraghazra",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
