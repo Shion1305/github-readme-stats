@@ -1,0 +1,57 @@
+version: "3.8"
+services:
+  github-readme-stats:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: github-readme-stats
+    restart: unless-stopped
+    ports:
+      - "${PORT:-9000}:9000"
+    environment:
+      # GitHub Personal Access Token (required for private stats)
+      - PAT_1=${PAT_1}
+      # Optional: Additional PAT tokens for load balancing
+      # - PAT_2=${PAT_2}
+      # - PAT_3=${PAT_3}
+
+      # Optional: Cache duration in seconds (default: 21600 = 6 hours)
+      - CACHE_SECONDS=${CACHE_SECONDS:-21600}
+      # Optional: Whitelist specific GitHub usernames (comma-separated)
+      # - WHITELIST=${WHITELIST}
+
+      # Optional: Whitelist specific Gist IDs (comma-separated)
+      # - GIST_WHITELIST=${GIST_WHITELIST}
+
+      # Optional: Exclude specific repositories (comma-separated)
+      # - EXCLUDE_REPO=${EXCLUDE_REPO}
+
+      # Optional: Fetch multi-page stars (true/false, may increase response time)
+      # - FETCH_MULTI_PAGE_STARS=${FETCH_MULTI_PAGE_STARS:-false}
+
+      # Server port
+      - PORT=9000
+      # Node environment
+      - NODE_ENV=production
+    env_file:
+      - .env
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:9000/api?username=anuraghazra",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - github-readme-stats-network
+networks:
+  github-readme-stats-network:
+    driver: bridge
